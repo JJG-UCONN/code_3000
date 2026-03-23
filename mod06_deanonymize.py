@@ -20,18 +20,25 @@ def link_records(anon_df:pd.DataFrame, aux_df:pd.DataFrame):
     """
     retVal = {"anon_id": [], "matched_name": []}
     
-    for idx, row in anon_df.iterrows():
-        #iterate through each anonymous element
-        #now determine if exists in aux_df
-        for idx2, row2, in aux_df.iterrows():
-            #if (row.values[1:] == row.values[1:]):
-            if (row["age"] == row2["age"]) and (row["zip3"] == row2["zip3"]) and (row["gender"] == row2["gender"]):
-                retVal["anon_id"].append(row["anon_id"])
-                retVal["matched_name"].append(row2["name"])
-                anon_df = anon_df.drop(idx)
-                aux_df = aux_df.drop(idx2)
+    # for idx, row in anon_df.iterrows():
+    #     #iterate through each anonymous element
+    #     #now determine if exists in aux_df
+    #     for idx2, row2, in aux_df.iterrows():
+    #         #if (row.values[1:] == row.values[1:]):
+    #         if (row["age"] == row2["age"]) and (row["zip3"] == row2["zip3"]) and (row["gender"] == row2["gender"]):
+    #             retVal["anon_id"].append(row["anon_id"])
+    #             retVal["matched_name"].append(row2["name"])
+    #             anon_df = anon_df.drop(idx)
+    #             aux_df = aux_df.drop(idx2)
 
-                break    
+    #             break    
+    for idx, row in anon_df.iterrows():
+        result = aux_df[aux_df['age'] == row["age"]]
+        result = result[result['zip3'] == row['zip3']]
+        result = result[result['gender'] == row['gender']]
+        if len(result) == 1:
+            retVal["anon_id"].append(row['anon_id'])
+            retVal["matched_name"].append(result.head()['name'])
     return pd.DataFrame(retVal)
     #retVal = {"anon_id": anon_df.pop("anon_id"), "matched_name": aux_df.pop("name")}
     #return pd.DataFrame(retVal)
